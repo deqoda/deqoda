@@ -1,0 +1,5 @@
+2017-12-28 08:15:23	mijo	https://deqoda.com/snippets/how-to-replace-text-in-a-string-with-jquery/	Unknown Selector operator: '' -- was your selector value properly escaped?  (in /wire/core/Selectors.php line 396)
+2017-12-28 08:15:26	mijo	https://deqoda.com/snippets/how-to-replace-text-in-a-string-with-jquery/	Unknown Selector operator: '' -- was your selector value properly escaped?  (in /wire/core/Selectors.php line 396)
+2017-12-28 08:15:39	mijo	https://deqoda.com/snippets/how-to-replace-text-in-a-string-with-jquery/	Unknown Selector operator: '' -- was your selector value properly escaped?  (in /wire/core/Selectors.php line 396)
+2017-12-28 08:16:18	mijo	https://deqoda.com/snippets/how-to-replace-text-in-a-string-with-jquery/	Unknown Selector operator: '' -- was your selector value properly escaped?  (in /wire/core/Selectors.php line 396)
+2018-01-08 08:20:54	mijo	https://www.deqoda.com/administracija/module/edit?name=SchedulePages&collapse_info=1	Can't uninstall because field publish_from is still being used. Please remove it from any templates. (in /site/assets/cache/FileCompiler/site/modules/SchedulePages/SchedulePages.module line 301)

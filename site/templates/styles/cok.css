@@ -1,0 +1,60 @@
+.cookies-eu {
+    bottom: 50px;
+    background-position: 24px 50%;
+    max-width: 750px;
+    margin: auto;
+    border-radius: 40px;
+    padding: 15px 0;
+    box-shadow: 0 0 16px 2px rgba(0,0,0,0.1);
+    background-repeat: no-repeat;
+    background-size: 31px 31px;
+    background-image: url(https://deqoda.com/img/cok.png);
+    
+    
+}
+
+@media (min-width: 992px)
+
+.cookies-eu {
+    max-width: 920px;
+}
+
+@media (min-width: 768px)
+
+.cookies-eu {
+    bottom: 50px;
+    background-position: 24px 50%;
+    max-width: 750px;
+    margin: auto;
+    border-radius: 40px;
+    padding: 15px 0;
+    box-shadow: 0 0 16px 2px rgba(0,0,0,0.1);
+    background-repeat: no-repeat;
+    background-size: 31px 31px;
+    background-image: url(https://deqoda.com/img/cok.png);
+    
+    
+}
+
+@media (min-width: 768px)
+
+.cookies-eu .cookies-eu-content-holder {
+    padding: 0 70px;
+}
+
+
+.cookies-eu .cookies-eu-content-holder {
+    display: block;
+}
+
+.cookies-eu .cookies-eu-content-holder {
+    display: inline-block;
+    padding: 0 20px;
+    line-height: 26px;
+}
+
+.cookies-eu .cookies-eu-link {
+    display: inline;
+    border-bottom: 1px solid #DDD;
+    margin-right: 7px;
+}

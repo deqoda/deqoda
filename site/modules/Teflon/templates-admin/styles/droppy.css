@@ -1,0 +1,36 @@
+/* Basic code -  modify only if you know what you're doing */
+ 
+ .droppy { display: block; margin: 0; padding: 0; }
+  .droppy li { display: block!important; list-style: none; margin: 0; padding: 0; float: left; position: relative!important; }
+  .droppy a { display: block!important;}
+  
+  .droppy ul { display: none; position: absolute; left: 0; margin: 0; padding: 0; }
+  * html .droppy ul { line-height: 0; } /* IE6 "fix" */
+   
+  /*ie6/7 removes unwanted space between li's*/ 
+  * html .droppy ul li{ border:0;#  display:inline; }
+  html* .droppy ul li{  border:0;#  display:inline; }
+   
+  .droppy ul a { zoom: 1; } /* IE6/7 fix */
+  .droppy ul li { float: none;}
+    
+/* Essentials - configure this */
+
+.droppy ul { width: 220px; }
+
+
+/* Everything else is theming */
+
+.droppy *:hover { background-color: none; }
+
+  .droppy li > ul { top: 31px; left:0px;}
+ 
+    .droppy ul li a { width:190px; display:block;}
+      .droppy ul a.has-subnav {  }
+    .droppy ul a.hover {  }
+   .droppy ul a {  }
+
+   .droppy li ul li ul { top:0; left:210px; width:275px; max-height:300px; overflow-y:auto; overflow-x:hidden}
+   .droppy li ul li ul li a { width:260px; padding:7px 15px 7px 15px!important;}
+/* .droppy ul a { border-bottom: none; } - I also needed this for IE6/7 */
+

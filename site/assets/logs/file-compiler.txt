@@ -1,0 +1,37 @@
+2017-12-27 14:20:02	?	?	Compiled file: /site/modules/MarkupSEO/MarkupSEO.module
+2017-12-27 14:20:02	?	?	Compiled file: /site/modules/MarkupSitemapXML/MarkupSitemapXML.module
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/AjaxSearch/AjaxSearch.module
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/Duplicator/Duplicator.module
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/Duplicator/Classes/DupUtil.php
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/Duplicator/Classes/DupLogs.php
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/Duplicator/Classes/BackupDatabase.php
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/ElasticSearch/ElasticSearch.module
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/MarkupJsonLDSchema/MarkupJsonLDSchema.module
+2017-12-27 14:20:02	mijo	http://deqoda.com/administracija/module/?reset=2	Compiled file: /site/modules/Duplicator/ProcessDuplicator.module
+2017-12-28 11:12:22	mijo	https://deqoda.com/administracija/module/download/	Compiled file: /site/modules/AllInOneMinify/AllInOneMinify.module
+2017-12-28 12:08:35	mijo	https://deqoda.com/administracija/module/download/	Compiled file: /site/modules/ProcessGoogleAnalytics/ProcessGoogleAnalytics.module
+2017-12-28 14:16:00	guest	https://deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/plugins.php => /site/assets/cache/FileCompiler/site/templates/plugins.php
+2017-12-29 16:19:22	guest	https://deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/plugins.php => /site/assets/cache/FileCompiler/site/templates/plugins.php
+2018-01-02 16:49:09	mijo	https://www.deqoda.com/administracija/module/download/	Compiled file: /site/modules/MarkupSitemap/MarkupSitemapConfig.php
+2018-01-02 16:49:09	mijo	https://www.deqoda.com/administracija/module/download/	Compiled file: /site/modules/MarkupSitemap/ClassLoader.php
+2018-01-02 16:49:11	mijo	https://www.deqoda.com/administracija/module/	Compiled file: /site/modules/MarkupSitemap/MarkupSitemap.module.php
+2018-01-02 18:36:46	guest	https://www.deqoda.com/http404/	Maintenance/Copy new version of source file to target file: /site/templates/plugins.php => /site/assets/cache/FileCompiler/site/templates/plugins.php
+2018-01-03 18:43:20	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/single.php => /site/assets/cache/FileCompiler/site/templates/single.php
+2018-01-03 18:43:20	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/scripts.php => /site/assets/cache/FileCompiler/site/templates/scripts.php
+2018-01-03 18:43:20	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/pluginlista.php => /site/assets/cache/FileCompiler/site/templates/pluginlista.php
+2018-01-03 18:43:20	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/plugins.php => /site/assets/cache/FileCompiler/site/templates/plugins.php
+2018-01-05 11:12:08	mijo	https://www.deqoda.com/administracija/module/download/	Compiled file: /site/modules/AdminOnSteroids/AdminOnSteroids.module
+2018-01-06 18:58:03	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/scripts.php => /site/assets/cache/FileCompiler/site/templates/scripts.php
+2018-01-06 18:58:03	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/pluginlista.php => /site/assets/cache/FileCompiler/site/templates/pluginlista.php
+2018-01-06 18:58:03	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/basic-page.php => /site/assets/cache/FileCompiler/site/templates/basic-page.php
+2018-01-06 18:58:03	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/contrib.php => /site/assets/cache/FileCompiler/site/templates/contrib.php
+2018-01-06 18:58:03	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/plugins.php => /site/assets/cache/FileCompiler/site/templates/plugins.php
+2018-01-08 08:09:54	mijo	https://www.deqoda.com/administracija/module/download/	Compiled file: /site/modules/SchedulePages/SchedulePages.module
+2018-01-08 11:16:23	mijo	https://www.deqoda.com/administracija/module/download/	Compiled file: /site/modules/InputfieldChosenSelect/InputfieldChosenSelect.module
+2018-01-08 11:16:25	mijo	https://www.deqoda.com/administracija/module/	Compiled file: /site/modules/InputfieldChosenSelect/InputfieldChosenSelectMultiple.module
+2018-01-08 11:30:39	mijo	https://www.deqoda.com/administracija/module/download/	Compiled file: /site/modules/FieldtypeSelect/FieldtypeSelect.module
+2018-01-09 19:09:58	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/plugins.php => /site/assets/cache/FileCompiler/site/templates/plugins.php
+2018-01-12 19:16:43	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/plugins.php => /site/assets/cache/FileCompiler/site/templates/plugins.php
+2018-01-12 19:16:43	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/modules/SchedulePages/SchedulePages.module => /site/assets/cache/FileCompiler/site/modules/SchedulePages/SchedulePages.module
+2018-01-12 19:21:42	?	?	Compiled file: /site/modules/SchedulePages/SchedulePages.module
+2018-01-22 19:42:59	guest	https://www.deqoda.com/	Maintenance/Copy new version of source file to target file: /site/templates/basic-page.php => /site/assets/cache/FileCompiler/site/templates/basic-page.php

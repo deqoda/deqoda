@@ -1,0 +1,399 @@
+<?php
+
+/**
+ * ElasticSearch for ProcessWire
+ * 
+ * By Jonathan Dart
+ * http://metricmarketing.ca/blog/author/jonathan-dart
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+class ElasticSearch extends WireData implements Module, ConfigurableModule {
+
+	public static function getModuleInfo() {
+
+		return array(
+			'title' => 'ElasticSearch', 
+			'version' => 44, 
+			'summary' => 'Make your pages searchable in ElasticSearch',
+			'href' => 'https://github.com/jdart/ElasticSearchProcessWire',
+			'singular' => true, 
+			'autoload' => true, 
+		);
+	}
+
+	public function init() {
+
+		$this->pages->addHookAfter('save', $this, 'afterPageSave');
+		$this->pages->addHookBefore('delete', $this, 'beforePageDelete');
+		$this->pages->addHookBefore('trash', $this, 'beforePageTrash');
+		$this->pages->addHookAfter('restored', $this, 'afterPageRestored');
+		$this->addHookAfter('Page::render', $this, 'checkForRebuildSearchData');
+	}
+
+	static public function getModuleConfigInputfields(array $data) 
+	{
+		$fields = new InputfieldWrapper();
+		$modules = Wire::getFuel('modules');
+
+		$field = $modules->get("InputfieldText");
+		$field->name = "es_host";
+		$field->label = __("ElasticSearch Host");
+		$field->value = isset($data['es_host']) ? $data['es_host'] : '127.0.0.1';
+		$field->description = __("An IP address will do, i.e. '127.0.0.1'.");
+		$fields->add($field);
+
+		$field = $modules->get("InputfieldText");
+		$field->name = "es_port";
+		$field->label = __("ElasticSearch Port");
+		$field->value = isset($data['es_port']) ? $data['es_port'] : '9200';
+		$field->description = __("Usually 9200.");
+		$fields->add($field);
+
+		$field = $modules->get("InputfieldText");
+		$field->name = "es_templates";
+		$field->label = __("Template Whitelist");
+		$field->value = isset($data['es_templates']) ? $data['es_templates'] : '';
+		$field->description = __("Example: basic-page");
+		$fields->add($field);
+		
+		$field = $modules->get('InputfieldMarkup');
+		$field->label  = __('Search Data');
+
+		$field_button = $modules->get('InputfieldButton');
+		$field_button->name = 'update_all_pages';
+		$field_button->value = __('Index All Pages');
+		$field_button->href = 'edit?name='.wire('input')->get('name').'&es_update=all_pages';
+		$field_button->description = __("Only do this after setting your ip/port and clicking 'Submit'.");
+		
+		$field->add($field_button);
+
+		$fields->add($field);
+
+		return $fields;
+	}
+
+	public function afterPageSave($event) {
+
+		$page = $event->arguments[0];
+		$this->updatePageContentInElasticSearch($page);
+	}
+
+	public function afterPageRestored($event) {
+
+		$page = $event->arguments[0];
+		$this->updatePageContentInElasticSearch($page);
+	}	
+
+	public function beforePageDelete($event) {
+
+		$page = $event->arguments[0];
+		$this->curlJsonDelete($page->id);
+	}
+
+	public function beforePageTrash($event) {
+
+		$page = $event->arguments[0];
+		$response = $this->curlJsonDelete($page->id);
+	}
+
+	public function getAllowedTemplates() {
+
+		$allowed_templates = array();
+
+		foreach (explode(' ', $this->es_templates) as $template)
+			$allowed_templates[] = $template;
+
+		return array_filter($allowed_templates);
+	}
+
+	public function pageShouldBeIndexed($page) {
+
+		$allowed_templates = $this->getAllowedTemplates();
+
+		if ($allowed_templates && ! in_array($page->template, $allowed_templates))
+			return false;
+
+		if ($page->isPublic())
+			return true;
+
+		return false;
+	}
+
+	public function checkForRebuildSearchData($event) {
+
+		if ($this->input->get('es_update') != 'all_pages' || $event->object->template != 'admin') 
+			return;
+
+		$status = $this->getElasticSearchStatus();
+
+		if ( ! $status)
+			return;
+
+		$this->curlJsonRequest('DELETE');
+
+		$pages = $this->pages->find("id!=2, id!=7, has_parent!=2, has_parent!=7, template!=admin, include=all");
+
+		foreach ($pages as $page) {
+
+			$this->updatePageContentInElasticSearch($page);
+		}
+
+		$this->session->message('Finished adding all pages to search index.');
+	}
+
+	protected function getAllContentForPage($page) {
+
+		$values = array();
+
+		foreach ($page->fields as $field) {
+
+			$value = $page->get($field->name);
+			$type = $field->type;
+
+			if (is_null($value) || is_bool($value))
+				continue;
+			if ($type instanceof FieldtypeFile) 
+				$value = $this->getFileTypeAsContent($value);
+			elseif ($type instanceof FieldtypePage) 
+				$value = $this->getPageTypeAsContent($value);
+			elseif ($type instanceof FieldtypeRepeater) 
+				$value = $this->getRepeaterTypeAsContent($value);
+			elseif (preg_match('/Language$/', get_class($type))) {
+				$value = $this->getLanguageTypeAsContent($value);
+			}
+
+			$values[$field->name] = $value;
+		}
+
+		return $values;
+	}
+
+	protected function getLanguageTypeAsContent($value)
+	{
+		$language_ids = wire('modules')->get('LanguageSupport')->get('otherLanguagePageIDs');
+		$language_ids[] = wire('modules')->get('LanguageSupport')->get('defaultLanguagePageID');
+		
+		$values = array();
+
+		foreach ($language_ids as $language_id) {
+			$values[] = $value->getLanguageValue($language_id);
+		}
+
+		return $values;
+	}
+
+	protected function getFileTypeAsContent($value)	{
+
+		$values = array();
+
+		foreach ($value as $file) {
+			$values[] = array(
+				'description' => $file->description(),
+				'filename' => $file->basename()
+			);
+		}
+
+		return $values;
+	}
+
+	protected function getPageTypeAsContent($value)	{
+
+		return $value->title;
+	}
+
+	protected function getRepeaterTypeAsContent($value)	{
+
+		$values = array();
+
+		foreach ($value as $subPage) {
+			$values[] = $this->getAllContentForPage($subPage);
+		}
+
+		return $values;
+	}	
+
+	protected function updatePageContentInElasticSearch($page) {
+
+		if ( ! $this->pageShouldBeIndexed($page))
+			return;
+
+		$raw_array = $this->getAllContentForPage($page);
+
+		$content = array('data' => $this->flattenArray($raw_array));
+
+		$response = $this->curlJsonPut($page->id, $content);
+	}
+
+	protected function flattenArray($array)	{
+
+		$return = array();
+
+		array_walk_recursive($array, function($a) use (&$return) { 
+
+			$return[] = $a; 
+		});
+
+		return $return;
+	}
+
+	protected function curlJsonGet($url, $data) {
+	
+		return $this->curlJsonRequest(null, $url, $data);
+	}
+
+	protected function curlJsonPut($id, $data) {
+			
+		return $this->curlJsonRequest('PUT', (int)$id, $data);
+	}
+
+	protected function curlJsonDelete($id)
+	{
+		return $this->curlJsonRequest('DELETE', (int)$id);
+	}
+
+	public function getElasticSearchStatus()
+	{
+		$ch = curl_init();
+
+		curl_setopt_array($ch, array(
+			CURLOPT_URL => $this->getElasticSearchUrlBase('/_cluster/health'),
+			CURLOPT_RETURNTRANSFER => true,
+		));
+
+		$response = curl_exec($ch);
+
+		if ($response === false) {
+
+			$this->session->error('ElasticSearch: '.curl_error($ch));
+			return null;
+		}
+
+		return json_decode($response);
+	}
+
+	public function curlJsonRequest($method=null, $append_url='', $data=null)
+	{
+		static $ch;
+
+		if ( ! isset($ch))
+			$ch = curl_init();
+
+		$config = array(
+			CURLOPT_URL => $this->getElasticSearchUrlBase().$append_url,
+			CURLOPT_RETURNTRANSFER => true,
+		);
+
+		if ( ! is_null($method))
+			$config[CURLOPT_CUSTOMREQUEST] = $method;
+
+		if ( ! is_null($data))
+			$config[CURLOPT_POSTFIELDS] = json_encode($data);
+
+		curl_setopt_array($ch, $config);
+
+		$response = curl_exec($ch);
+
+		if ($response === false) {
+
+			$this->session->error('ElasticSearch: '.curl_error($ch));
+			return null;
+		}
+
+		return json_decode($response);
+	}
+
+	protected function getElasticSearchUrlBase($url=null) {
+
+		if (is_null($url))
+			$url = sprintf('/%s/pw/', $this->getSiteIndex());
+
+		return sprintf('http://%s:%d%s', 
+			$this->getElasticSearchHost(), 
+			$this->getElasticSearchPort(),
+			$url
+		);
+	}
+
+	protected function getSiteIndex() {
+
+		return preg_replace('/[^a-z]/', '_', strtolower($this->config->httpHost));
+	}
+
+	protected function getElasticSearchHost() {
+
+		return $this->get('es_host');
+	}
+
+	protected function getElasticSearchPort() {
+
+		return $this->get('es_port');
+	}
+
+	public function search($query, $size=20, $minimum_score=0.03, $pageNum=null) {
+
+		if (is_null($pageNum) && ! ($pageNum = $this->input->pageNum))
+			$pageNum = 1;
+			
+		$from = ($pageNum-1)*$size;
+
+		if (is_string($query)) {
+
+			$params = array(
+				'min_score' => $minimum_score,
+				'query' => array(
+					'fuzzy_like_this' => array(
+						'fields' => array('_all'),
+						'like_text' => $query
+					),
+				),
+				'from' => $from,
+				'size' => $size
+			);
+
+		} elseif (is_array($query)) {
+
+			$params = $query;
+			$params['from'] = $from;
+			$params['size'] = $size;
+			$params['min_score'] = $minimum_score;
+		}
+
+		$results = $this->curlJsonGet('_search', $params);
+
+		$pages = new PageArray;
+
+		if ( ! $results) {
+			$this->session->error('ElasticSearch: Could not connect to ES server.');
+			return $pages;
+		}
+
+		if (isset($results->error)) {
+			$this->session->error('ElasticSearch: '.$results->error);
+			return $pages;
+		}
+
+		if ( ! (int)$results->hits->total)
+			return $pages;
+
+		foreach ($results->hits->hits as $hit) 
+			$pages->add($hit->_id);
+
+		$pages->setTotal($results->hits->total);
+		$pages->setLimit($size);
+		
+		return $pages;
+	}
+}
